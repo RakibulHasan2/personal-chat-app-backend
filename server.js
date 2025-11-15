@@ -23,7 +23,7 @@ const connectToDatabase = async () => {
     await mongoose.connect(mongoUri, {
       dbName: process.env.DB_NAME || 'necx_messaging_app'
     });
-    
+
     console.log('✅ Connected to MongoDB successfully');
   } catch (error) {
     console.error('❌ MongoDB connection error:', error.message);
@@ -35,15 +35,15 @@ const connectToDatabase = async () => {
 const initializeData = async () => {
   try {
     const userCount = await User.countDocuments();
-    
+
     if (userCount === 0) {
       console.log('🔧 Initializing default users...');
-      
+
       const defaultUsers = [
         { name: 'me' },
         { name: 'you' }
       ];
-      
+
       await User.insertMany(defaultUsers);
       console.log('✅ Default users initialized in MongoDB');
     } else {
@@ -57,8 +57,8 @@ const initializeData = async () => {
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? [''] 
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://personal-chat-application-frontend.vercel.app/']
     : [process.env.FRONTEND_URL || 'http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 }));
@@ -101,14 +101,14 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     console.log('🔧 Initializing NECX Messaging Backend...');
-    
+
     // Connect to MongoDB
     await connectToDatabase();
-    
+
     // Initialize database with default data
     await initializeData();
     console.log('✅ Database initialization complete');
-    
+
     // Start server
     app.listen(PORT, () => {
       console.log('');
